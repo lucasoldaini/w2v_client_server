@@ -1,0 +1,3 @@
+[submodule "MinimalServer"]
+	path = MinimalServer
+	url = git@github.com:lucasoldaini/MinimalServer.git

@@ -23,6 +23,9 @@ class W2VServer:
     def set_oov(self, oov_word):
         self.oov_word = oov_word
 
+    def get_vector_size(self):
+        return self.w2v.vector_size
+
     def _get_term(self, term):
         if term in self.w2v.vocab:
             return self.w2v[term]

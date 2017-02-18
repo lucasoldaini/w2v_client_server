@@ -23,6 +23,12 @@ class W2VServer:
     def set_oov(self, oov_word):
         self.oov_word = oov_word
 
+    def get_oov(self):
+        return self.oov_word
+
+    def similar_by_vector(self, vector, topn=10):
+        return self.w2v.similar_by_vector(vector=vector, topn=topn)
+
     def get_vector_size(self):
         return self.w2v.vector_size
 

@@ -1,5 +1,6 @@
 import gensim
 import numpy
+import pickle
 from argparse import ArgumentParser
 from time import time
 
@@ -10,11 +11,22 @@ except ImportError:
 
 
 class W2VServer:
-    def __init__(self, path, binary):
+    def __init__(self, path, binary, gensim_class):
         start = time()
-        self.w2v = gensim.models.Word2Vec.load_word2vec_format(
-            path, binary=binary
-        )
+        if gensim_class:
+            try:
+                self.w2v = gensim.models.Word2Vec.load(path)
+            except UnicodeDecodeError:
+                with open(path, 'rb') as f:
+                    u = pickle._Unpickler(f)
+                    u.encoding = 'latin1'
+                    self.w2v = u.load()
+        else:
+            self.w2v = gensim.models.Word2Vec.load_word2vec_format(
+                path, binary=binary
+            )
+
+
         delta = time() - start
         print('[info] model loaded in {:.2f} s'.format(delta))
 
@@ -46,7 +58,9 @@ class W2VServer:
 
 
 def run_w2v_server(opts):
-    w2v = W2VServer(path=opts.path, binary=opts.binary)
+    w2v = W2VServer(
+        path=opts.path, binary=opts.binary,
+        gensim_class=opts.gensim_class)
 
     run_server(
         w2v, host=opts.host, port=opts.port, buffersize=4096)
@@ -56,6 +70,7 @@ if __name__ == '__main__':
     ap = ArgumentParser()
     ap.add_argument('path')
     ap.add_argument('-b', '--binary', action='store_true')
+    ap.add_argument('-g', '--gensim-class', action='store_true')
     ap.add_argument('-H', '--host', default='localhost')
     ap.add_argument('-P', '--port', default=7443, type=int)
 

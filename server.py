@@ -22,10 +22,9 @@ class W2VServer:
                     u.encoding = 'latin1'
                     self.w2v = u.load()
         else:
-            self.w2v = gensim.models.Word2Vec.load_word2vec_format(
+            self.w2v = gensim.models.KeyedVectors.load_word2vec_format(
                 path, binary=binary
             )
-
 
         delta = time() - start
         print('[info] model loaded in {:.2f} s'.format(delta))
